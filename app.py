@@ -30,3 +30,10 @@ def new_game():
     # games.gameId = game_id
     # games.board = game
     # game.board = list of lists (list with 5 lists of 5 letters)
+
+@app.post("/api/score-word")
+def score_word():
+    """Accepts a JSON {game_id, word} and checks if the word is legal:
+    1. word is on the word list
+    2. word is on the board
+    Returns a JSON response using jsonify """
