@@ -22,8 +22,11 @@ def new_game():
     """Start a new game and return JSON: {game_id, board}."""
 
     # get a unique string id for the board we're creating
-    game_id = str(uuid4())
-    game = BoggleGame()
-    games[game_id] = game
+    game_id = str(uuid4()) #creates a new string game_id
+    game = BoggleGame() #creates a new game instance
+    games[game_id] = game #adds game value to game_id key in games dict
 
-    return {"gameId": "need-real-id", "board": "need-real-board"}
+    return jsonify({"gameId": game_id, "board": game.board}) 
+    # games.gameId = game_id
+    # games.board = game
+    # game.board = list of lists (list with 5 lists of 5 letters)

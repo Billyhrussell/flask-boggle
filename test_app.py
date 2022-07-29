@@ -30,8 +30,28 @@ class BoggleAppTestCase(TestCase):
             # test that you're getting a template
 
     def test_api_new_game(self):
-        """Test starting a new game."""
-
+        """Test starting a new game.
+        1. check if return JSON
+        2. check if JSON has a string called "gameId" 
+        and a nested list [[5 letters]x5](=board)
+        3. check that games dict contains new game"""
+        
         with self.client as client:
-            ...
-            # write a test for this route
+            resp = client.post("/api/new-game")
+            JSON = resp.get_json()
+    
+            self.assertEqual(resp.is_json, True)
+            self.assertTrue(type(JSON["gameId"]) == str)
+
+            self.assertTrue(type(JSON['board']))
+            self.assertTrue(len(JSON['board']) == 5)
+
+            self.assertTrue(type(JSON['board'][0]))
+            self.assertTrue(len(JSON['board'][0]) == 5)
+
+            self.assertTrue(games.__contains__(JSON['gameId']))
+
+
+
+
+           
