@@ -32,14 +32,14 @@ class BoggleAppTestCase(TestCase):
     def test_api_new_game(self):
         """Test starting a new game.
         1. check if return JSON
-        2. check if JSON has a string called "gameId" 
+        2. check if JSON has a string called "gameId"
         and a nested list [[5 letters]x5](=board)
         3. check that games dict contains new game"""
-        
+
         with self.client as client:
             resp = client.post("/api/new-game")
             JSON = resp.get_json()
-    
+
             self.assertEqual(resp.is_json, True)
             self.assertTrue(type(JSON["gameId"]) == str)
 
@@ -51,7 +51,42 @@ class BoggleAppTestCase(TestCase):
 
             self.assertTrue(games.__contains__(JSON['gameId']))
 
+    def test_for_word(self):
+        with self.client as client:
+            resp = client.post("/api/new-game")
+            JSON = resp.get_json()
+
+            game_id = JSON["gameId"]
+            game = games[game_id]
+            game.board = [["C","A","T","X", "X"],
+             ["C","A","T","X", "X"], ["C","A","T","X", "X"],
+             ["C","A","T","X", "X"], ["C","A","T","X", "X"]]
+            resp = client.post("/api/score-word", json = {"game_id" : game_id, "word" : "CAT"})
+
+            json = resp.get_json()
+            self.assertEqual(json, {"result" : "ok"})
+
+            game_id = JSON["gameId"]
+            game = games[game_id]
+            game.board = [["C","A","T","X", "X"],
+             ["C","A","T","X", "X"], ["C","A","T","X", "X"],
+             ["C","A","T","X", "X"], ["C","A","T","X", "X"]]
+            resp = client.post("/api/score-word", json = {"game_id" : game_id, "word" : "$$$"})
+
+            json = resp.get_json()
+            self.assertEqual(json, {"result" : "not-word"})
+
+            game_id = JSON["gameId"]
+            game = games[game_id]
+            game.board = [["C","A","T","X", "X"],
+             ["C","A","T","X", "X"], ["C","A","T","X", "X"],
+             ["C","A","T","X", "X"], ["C","A","T","X", "X"]]
+            resp = client.post("/api/score-word", json = {"game_id" : game_id, "word" : "WOW"})
+
+            json = resp.get_json()
+            self.assertEqual(json, {"result" : "not-on-board"})
 
 
 
-           
+
+
