@@ -22,9 +22,24 @@ async function start() {
 /** Display board */
 
 function displayBoard(board) {
-  // $table.empty();
+  $table.empty();
   // loop over board and create the DOM tr/td structure
+  // i = [["C","A","T","X", "X"],
+  //            ["C","A","T","X", "X"], ["C","A","T","X", "X"],
+  //            ["C","A","T","X", "X"], ["C","A","T","X", "X"]]
+
+  for (let i = 0; i < board.length(); i++) {
+    const $tr = $("<tr>");
+    for (let j = 0; j < board.length(); j++) {
+      const $td = ($("<td>"))
+      $tr.append($td)
+      $td.text(`${board[i][j]}`)
+    }
+    $table.append($tr)
+  }
 }
+
+
 
 
 start();

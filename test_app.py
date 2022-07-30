@@ -38,25 +38,28 @@ class BoggleAppTestCase(TestCase):
 
         with self.client as client:
             resp = client.post("/api/new-game")
-            JSON = resp.get_json()
+            game_data = resp.get_json()
+            gameId = game_data["gameId"]
+            board = game_data["board"]
 
             self.assertEqual(resp.is_json, True)
-            self.assertTrue(type(JSON["gameId"]) == str)
+            self.assertTrue(isinstance(gameId, str))
 
-            self.assertTrue(type(JSON['board']))
-            self.assertTrue(len(JSON['board']) == 5)
+            self.assertTrue(isinstance(board, list))
+            self.assertTrue(len(board) == 5)
 
-            self.assertTrue(type(JSON['board'][0]))
-            self.assertTrue(len(JSON['board'][0]) == 5)
+            self.assertTrue(isinstance(board[0], list))
+            self.assertTrue(len(board[0]) == 5)
 
-            self.assertTrue(games.__contains__(JSON['gameId']))
+            self.assertIn(gameId, games)
 
     def test_for_word(self):
         with self.client as client:
             resp = client.post("/api/new-game")
-            JSON = resp.get_json()
+            game_data = resp.get_json() #json is confusing, choose another var name because its not rly a json objectm its a DICT
+            """{'board': [['K', 'D', 'E', 'Y', 'H'], ['O', 'R', 'A', 'E', 'T'], ['F', 'D', 'D', 'Y', 'O'], ['Y', 'R', 'B', 'M', 'B'], ['S', 'I', 'S', 'S', 'E']], 'gameId': '2acb549e-0691-4252-b316-7bed60320ede'}"""
 
-            game_id = JSON["gameId"]
+            game_id = game_data["gameId"]
             game = games[game_id]
             game.board = [["C","A","T","X", "X"],
              ["C","A","T","X", "X"], ["C","A","T","X", "X"],
@@ -66,21 +69,13 @@ class BoggleAppTestCase(TestCase):
             json = resp.get_json()
             self.assertEqual(json, {"result" : "ok"})
 
-            game_id = JSON["gameId"]
-            game = games[game_id]
-            game.board = [["C","A","T","X", "X"],
-             ["C","A","T","X", "X"], ["C","A","T","X", "X"],
-             ["C","A","T","X", "X"], ["C","A","T","X", "X"]]
+        
             resp = client.post("/api/score-word", json = {"game_id" : game_id, "word" : "$$$"})
 
             json = resp.get_json()
             self.assertEqual(json, {"result" : "not-word"})
 
-            game_id = JSON["gameId"]
-            game = games[game_id]
-            game.board = [["C","A","T","X", "X"],
-             ["C","A","T","X", "X"], ["C","A","T","X", "X"],
-             ["C","A","T","X", "X"], ["C","A","T","X", "X"]]
+
             resp = client.post("/api/score-word", json = {"game_id" : game_id, "word" : "WOW"})
 
             json = resp.get_json()
